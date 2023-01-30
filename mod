@@ -1,3 +1,3 @@
 NAME=eunomia
-VERSION=v1.2.3
+VERSION=v1.2.4
 DESCRIPTION="Eunomia Service"
