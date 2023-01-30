@@ -1,0 +1,40 @@
+version: '3.7'
+
+services:
+  eunomia:
+    restart: always
+    image: whatwewant/connect-go:v1
+    ports:
+      - 0.0.0.0:8081:8080 # webhook
+    environment:
+      MODE: production
+    volumes:
+      # - /etc/timezone:/etc/timezone
+      - /etc/localtime:/etc/localtime
+      - ${SERVICE_CONFIGS}/connect.yml:/conf/config.yml
+
+  eunomia-frontend:
+    restart: always
+    image: ${SERVICE_EUNOMIA_IMAGE_REGISTRY}/${SERVICE_EUNOMIA_IMAGE_ORG}/eunomia-frontend:${SERVICE_EUNOMIA_IMAGE_FRONTEND_VERSION}
+    environment:
+      MODE: production
+      PORT: 8080
+
+  eunomia-backend:
+    restart: always
+    image: ${SERVICE_EUNOMIA_IMAGE_REGISTRY}/${SERVICE_EUNOMIA_IMAGE_ORG}/eunomia-backend:${SERVICE_EUNOMIA_IMAGE_BACKEND_VERSION}
+    environment:
+      MODE: production
+      PORT: 8080
+      TZ: Asia/Shanghai
+    volumes:
+      # - /etc/timezone:/etc/timezone
+      - /etc/localtime:/etc/localtime
+      - ${SERVICE_CONFIGS}/backend.yml:/conf/config.yml
+      - ${SERVICE_CONFIGS}/backend.yml:/app/.config.yml
+      - /var/run/docker.sock:/var/run/docker.sock
+
+networks:
+  default:
+    external: true
+    name: compose-ingress

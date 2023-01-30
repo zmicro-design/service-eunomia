@@ -1,0 +1,31 @@
+#!/bin/bash
+
+service::config_set() {
+  config::check_or_set $@ $SERVICE_CONFIG
+}
+
+check() {
+  if [ "$DEBUG" = "true" ]; then
+    log::info "[DEBUG][service][eunomia]: $SERVICE_CONFIG"
+    cat $SERVICE_CONFIG
+  fi
+  
+
+  if [ ! -f "${SERVICE_CONFIGS}/connect.yml" ]; then
+    log::error "[$(timestamp)] connect config(connect.yml) not found"
+    exit 1
+  fi
+
+  if [ ! -f "${SERVICE_CONFIGS}/backend.yml" ]; then
+    log::error "[$(timestamp)] backend config(backend.yml) not found"
+    exit 1
+  fi
+
+  service::config_set SERVICE_EUNOMIA_IMAGE_REGISTRY text
+  service::config_set SERVICE_EUNOMIA_IMAGE_ORG text
+
+  # service::config_set SERVICE_EUNOMIA_HTTP_PORT text
+  # service::config_set SERVICE_EUNOMIA_ROOT_URL text
+}
+
+check $@
